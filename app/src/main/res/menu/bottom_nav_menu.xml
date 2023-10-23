@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="Início"
+        android:icon="@drawable/home"
+        android:id="@+id/home"/>
+    <item
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="Perfis"
+        android:icon="@drawable/person"
+        android:id="@+id/profiles"/>
+    <item
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="Novo Medicamento"
+        android:icon="@drawable/addmed"
+        android:id="@+id/addmed"/>
+    <item
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="Lista de compras"
+        android:icon="@drawable/cart"
+        android:id="@+id/cart"/>
+    <item
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="Medicamentos"
+        android:icon="@drawable/list"
+        android:id="@+id/list"/>
+
+</menu>
