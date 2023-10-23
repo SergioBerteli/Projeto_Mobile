@@ -13,6 +13,9 @@
         android:theme="@style/Theme.T3_mobile"
         tools:targetApi="31">
         <activity
+            android:name=".CriaPerfilActivity"
+            android:exported="false" />
+        <activity
             android:name=".Logado"
             android:exported="false" />
         <activity

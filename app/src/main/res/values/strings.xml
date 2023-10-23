@@ -30,4 +30,9 @@
 
     <string name="prox_med">Próximas 3\nmmedicações:</string>
     <string name="med_hist">Ultimas 3\nmedicações\nconsumidas</string>
+
+    <string name="perfis_titulo">Perfis</string>
+    <string name="add_perfil">Adicionar perfil</string>
+
+    <string name="titulo_cria_perfil">Novo Perfil</string>
 </resources>

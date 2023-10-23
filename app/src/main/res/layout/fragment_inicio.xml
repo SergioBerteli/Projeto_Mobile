@@ -69,6 +69,43 @@
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_link_ger" />
+
+        <TextView
+            android:id="@+id/tv_alerta_falta_rem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/alerta_remedios"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_link_lista_c" />
+
+        <TextView
+            android:id="@+id/tv_prox_med"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="98dp"
+            android:text="@string/prox_med"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_alerta_falta_rem" />
+
+        <TextView
+            android:id="@+id/tv_hist_med"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="98dp"
+            android:layout_marginEnd="32dp"
+            android:text="@string/med_hist"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_alerta_falta_rem" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
