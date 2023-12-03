@@ -5,6 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.t3_mobile.adapter.MedicamentosAdapter
+import com.example.t3_mobile.adapter.PerfilAdapter
+import com.example.t3_mobile.databinding.FragmentMedicamentosBinding
+import com.example.t3_mobile.databinding.FragmentPerfisBinding
 import com.example.t3_mobile.model.Medicamento
 
 // TODO: Rename parameter arguments, choose names that match
@@ -22,6 +29,12 @@ class MedicamentosFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+
+    private var _binding: FragmentMedicamentosBinding? = null
+
+
+    private val binding get() = _binding!!
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -34,6 +47,8 @@ class MedicamentosFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        _binding = FragmentMedicamentosBinding.inflate(inflater, container, false)
+        val view = binding.root
 
         val listaMedicamentos = listOf(
             Medicamento(1, "med a", "12:00", 1, 2, "quilogramas"),
@@ -43,8 +58,18 @@ class MedicamentosFragment : Fragment() {
             Medicamento(5, "med e", "12:00", 1, 2, "quilos")
         )
 
+        var receyclerMedicamento = _binding!!.RVM
+        receyclerMedicamento.adapter = MedicamentosAdapter(listaMedicamentos)
+        receyclerMedicamento.layoutManager = LinearLayoutManager(view.context)
+
+        receyclerMedicamento.addItemDecoration(
+            DividerItemDecoration(
+            view.context,
+            RecyclerView.VERTICAL
+        )
+        )
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_medicamentos, container, false)
+        return view
     }
 
     companion object {

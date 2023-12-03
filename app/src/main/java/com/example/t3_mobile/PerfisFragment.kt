@@ -59,6 +59,7 @@ class PerfisFragment : Fragment() {
             Usuario(4, "Ana", "Mulher", 18),
             Usuario(5, "Hevnadro", "Mulher", 24)
         )
+
         var recyclerUsuario = _binding!!.RVP
         recyclerUsuario.adapter = PerfilAdapter(listaUsuario)
         recyclerUsuario.layoutManager = LinearLayoutManager(view.context)

@@ -23,15 +23,13 @@ class PerfilAdapter(
         val textIdade:TextView = itemView.findViewById(R.id.TV_LP_IDADE)
         val textGenero:TextView = itemView.findViewById(R.id.TV_LP_genero)
         val btnEditar:ImageButton = itemView.findViewById(R.id.BTN_LP_EDITAR)
-        val btnEntrar:ImageButton = itemView.findViewById(R.id.btn_LP_ENTRAR)
-        val btnDeletar:ImageButton = itemView.findViewById(R.id.BTN_LP_DELETAR)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UsuarioViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
 
         val itemView = layoutInflater.inflate(
-            R.layout.item_lista_medicamentos,
+            R.layout.item_lista_usuario,
             parent,
             false
         )
@@ -48,11 +46,6 @@ class PerfilAdapter(
         holder.textNome.text = "Nome: ${usuario.nome}"
         holder.textIdade.text = "Idade: ${usuario.idade.toString()} anos"
         holder.textGenero.text = "Genero: ${usuario.genero}"
-        holder.btnEditar.setOnClickListener{
-            Toast.makeText(
-                holder.textNome.context, "Editar ${usuario.nome}", Toast.LENGTH_LONG
-            ).show()
-        }
     }
 
 }

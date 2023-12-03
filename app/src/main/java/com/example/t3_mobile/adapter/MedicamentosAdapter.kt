@@ -20,7 +20,7 @@ class MedicamentosAdapter(
         val textNome: TextView = itemView.findViewById(R.id.TV_LM_NOME)
         val textPeriodo: TextView = itemView.findViewById(R.id.TV_LM_PERIODO)
         val textConsumido: TextView = itemView.findViewById(R.id.TV_LM_CONSUMIDO)
-        val textResto: TextView = itemView.findViewById(R.id.TV_LM_CONSUMIDO)
+        val textResto: TextView = itemView.findViewById(R.id.TV_LM_RESTO)
         val btnEditar: ImageButton = itemView.findViewById(R.id.BTN_LM_EDITAR)
         val btnDeletar: ImageButton = itemView.findViewById(R.id.BTN_LM_DELETAR)
     }
@@ -29,7 +29,7 @@ class MedicamentosAdapter(
         val layoutInflater = LayoutInflater.from(parent.context)
 
         val itemView = layoutInflater.inflate(
-            R.layout.item_lista_usuario,
+            R.layout.item_lista_medicamentos,
             parent,
             false
         )
@@ -44,8 +44,8 @@ class MedicamentosAdapter(
     override fun onBindViewHolder(holder: MedicamentoViewHolder, position: Int) {
         var medicamento = listaMedicamento[position]
         holder.textNome.text = medicamento.nome
-        holder.textConsumido.text = "Proximo horário: ${medicamento.periodo}"
-        holder.textResto.text = "Doses restantes: ${medicamento.qtd_meta}"
-        holder.textConsumido.text = "Doses consumidas: ${medicamento.qtd_atual}"
+        holder.textPeriodo.text = "Proximo horário: ${medicamento.periodo}"
+        holder.textResto.text = "${medicamento.unidade_medida} restantes: ${medicamento.qtd_meta}"
+        holder.textConsumido.text = "${medicamento.unidade_medida} consumidos(as): ${medicamento.qtd_atual}"
     }
 }
