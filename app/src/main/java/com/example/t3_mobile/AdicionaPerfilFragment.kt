@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.t3_mobile.model.Medicamento
+import com.example.t3_mobile.databinding.FragmentAdicionaPerfilBinding
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -14,13 +14,18 @@ private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [MedicamentosFragment.newInstance] factory method to
+ * Use the [AdicionaPerfilFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class MedicamentosFragment : Fragment() {
+class AdicionaPerfilFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    private var _binding: FragmentAdicionaPerfilBinding? = null
+
+    private val binding get() = _binding!!
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,17 +39,17 @@ class MedicamentosFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        _binding = FragmentAdicionaPerfilBinding.inflate(inflater, container, false)
+        val view = binding.root
+        _binding!!.btnAPCOMMIT.setOnClickListener {
+            replaceFragment(PerfisFragment())
+        }
+        return view
+    }
 
-        val listaMedicamentos = listOf(
-            Medicamento(1, "med a", "12:00", 1, 2, "quilogramas"),
-            Medicamento(2, "med b", "02:00", 1, 3, "comprimidos"),
-            Medicamento(3, "med c", "04:00", 3, 1, "mililitros"),
-            Medicamento(4, "med d", "12:00", 7, 2, "quilos"),
-            Medicamento(5, "med e", "12:00", 1, 2, "quilos")
-        )
-
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_medicamentos, container, false)
+    override fun onDestroyView(){
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {
@@ -54,16 +59,23 @@ class MedicamentosFragment : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment MedicamentosFragment.
+         * @return A new instance of fragment AdicionaPerfilFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            MedicamentosFragment().apply {
+            AdicionaPerfilFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    private fun replaceFragment(fragment: Fragment){
+        val fragmentManager= parentFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.mainframe,fragment)
+        fragmentTransaction.commit()
     }
 }

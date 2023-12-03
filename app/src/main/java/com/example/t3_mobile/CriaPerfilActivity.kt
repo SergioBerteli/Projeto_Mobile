@@ -11,6 +11,10 @@ class CriaPerfilActivity : AppCompatActivity() {
         binding = ActivityCriaPerfilBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
+        binding.btnCriaPerfil.setOnClickListener {
+            finish()
+        }
     }
+
+
 }
