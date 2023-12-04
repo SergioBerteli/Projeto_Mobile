@@ -5,6 +5,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.t3_mobile.adapter.ComprarMedicamentoAdapter
+import com.example.t3_mobile.adapter.PerfilAdapter
+import com.example.t3_mobile.databinding.FragmentListaComprasBinding
+import com.example.t3_mobile.databinding.FragmentPerfisBinding
+import com.example.t3_mobile.model.ComprarMedicamento
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -16,10 +24,18 @@ private const val ARG_PARAM2 = "param2"
  * Use the [ListaComprasFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+
+
+
 class ListaComprasFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    private var _binding: FragmentListaComprasBinding? = null
+
+
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,8 +49,31 @@ class ListaComprasFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        _binding = FragmentListaComprasBinding.inflate(inflater, container, false)
+        val view = binding.root
+
+        var listaComprarMedicamentos = listOf(
+            ComprarMedicamento(1, "med c", 20),
+            ComprarMedicamento(2, "med d", 2),
+            ComprarMedicamento(3, "med q", 10),
+            ComprarMedicamento(4, "med w", 12),
+
+        )
+
+        var recyclerComprarMedicamento = _binding!!.RVLC
+        recyclerComprarMedicamento.adapter = ComprarMedicamentoAdapter(listaComprarMedicamentos)
+        recyclerComprarMedicamento.layoutManager = LinearLayoutManager(view.context)
+
+        recyclerComprarMedicamento.addItemDecoration(
+            DividerItemDecoration(
+            view.context,
+            RecyclerView.VERTICAL
+        )
+        )
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_lista_compras, container, false)
+        return view
     }
 
     companion object {
