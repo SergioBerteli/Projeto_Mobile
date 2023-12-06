@@ -2,6 +2,7 @@ package com.example.t3_mobile.databse
 
 import android.content.ContentValues
 import android.content.Context
+import android.provider.ContactsContract.Data
 import android.util.Log
 import com.example.t3_mobile.ListaComprasFragment
 import com.example.t3_mobile.model.ComprarMedicamento
@@ -31,10 +32,19 @@ class ComprarDAO(
     }
 
     override fun atualizar(compras: ComprarMedicamento): Boolean {
+        val args = arrayOf(compras.id.toString())
+        val conteudo = ContentValues()
+        conteudo.put(DatabaseHelper.TC_NOME, compras.nome)
+        conteudo.put(DatabaseHelper.TC_QTD, compras.qtd)
+
         try {
-
+            escrita.update(
+                DatabaseHelper.TABLE_COMPRAS,
+                conteudo,
+                "${DatabaseHelper.TC_COD} = ?",
+                args
+            )
         } catch (e: Exception) {
-
             return false
         }
         return true

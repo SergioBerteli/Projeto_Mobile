@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,6 +38,9 @@ class ListaComprasFragment : Fragment() {
 
     private val binding get() = _binding!!
 
+    var modo: Boolean = true
+    var codigo_para_edicao: Int = 0
+
     private var listaCompras = emptyList<ComprarMedicamento>()
     private var comprarMedicamentoAdapter: ComprarMedicamentoAdapter? = null
 
@@ -53,27 +57,16 @@ class ListaComprasFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        var modo: Boolean = true
-
         _binding = FragmentListaComprasBinding.inflate(inflater, container, false)
         val view = binding.root
 
         // Inserção
         _binding!!.BTNLCCOMMIT.setOnClickListener {
-            val comprarDao = ComprarDAO(requireContext())
-            val compra = ComprarMedicamento(
-                -1,
-                _binding!!.inpTILCNOME.text.toString(),
-                _binding!!.inpTILCQTD.text.toString().toInt()
-            )
-            if (comprarDao.salvar(compra)){
-                Log.i("database", "Medicamento ${compra.nome} inserido")
+            if (modo) {
+                salvar()
             } else {
-                Log.i("database", "Erro ao salver ${compra.nome}.")
+                editar()
             }
-
-            atualizarListaCompras()
-            reloadFragment()
         }
 
 
@@ -81,7 +74,7 @@ class ListaComprasFragment : Fragment() {
 
         comprarMedicamentoAdapter = ComprarMedicamentoAdapter(
             {codigo -> confirmarExclusao(codigo)},
-            {comprarMedicamento -> editar(comprarMedicamento)}
+            {comprarMedicamento -> modo_editar(comprarMedicamento)}
         )
         binding.RVLC.adapter = comprarMedicamentoAdapter
         binding.RVLC.layoutManager = LinearLayoutManager(view.context)
@@ -92,9 +85,49 @@ class ListaComprasFragment : Fragment() {
         return view
     }
 
-    private fun editar(compra: ComprarMedicamento) {
+    private fun editar() {
+        val compra: ComprarMedicamento = ComprarMedicamento(
+            codigo_para_edicao,
+            _binding!!.inpTILCNOME.text.toString(),
+            _binding!!.inpTILCQTD.text.toString().toInt()
+        )
+
+        val compraDAO = ComprarDAO(requireContext())
+        if (compraDAO.atualizar(compra)){
+            Log.i("database", "Compra ${compra.nome} atualizada com sucesso")
+        } else {
+            Log.i("database", "Erro ao atualizar ${compra.nome}")
+        }
+        modo = true
+        atualizarListaCompras()
+        reloadFragment()
+        Toast.makeText(requireContext(), "Ordem de compra alterada com sucesso!", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun modo_editar(compra: ComprarMedicamento) {
         binding.inpTILCNOME.setText(compra.nome)
         binding.inpTILCQTD.setText(compra.qtd.toString())
+        codigo_para_edicao = compra.id
+        modo = false
+        Toast.makeText(requireContext(), "Insira as novas características por favor", Toast.LENGTH_LONG).show()
+    }
+
+    private fun salvar() {
+        val comprarDao = ComprarDAO(requireContext())
+        val compra = ComprarMedicamento(
+            -1,
+            _binding!!.inpTILCNOME.text.toString(),
+            _binding!!.inpTILCQTD.text.toString().toInt()
+        )
+        if (comprarDao.salvar(compra)){
+            Log.i("database", "Medicamento ${compra.nome} inserido")
+        } else {
+            Log.i("database", "Erro ao salver ${compra.nome}.")
+        }
+
+        atualizarListaCompras()
+        reloadFragment()
+        Toast.makeText(requireContext(), "Ordem de compra adicionada com sucesso!", Toast.LENGTH_SHORT).show()
     }
 
     private fun confirmarExclusao(codigo: Int) {
