@@ -1,17 +1,17 @@
 package com.example.t3_mobile
 
+import android.app.AlertDialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.t3_mobile.adapter.ComprarMedicamentoAdapter
-import com.example.t3_mobile.adapter.PerfilAdapter
 import com.example.t3_mobile.databinding.FragmentListaComprasBinding
-import com.example.t3_mobile.databinding.FragmentPerfisBinding
+import com.example.t3_mobile.databse.ComprarDAO
 import com.example.t3_mobile.model.ComprarMedicamento
 
 // TODO: Rename parameter arguments, choose names that match
@@ -37,6 +37,9 @@ class ListaComprasFragment : Fragment() {
 
     private val binding get() = _binding!!
 
+    private var listaCompras = emptyList<ComprarMedicamento>()
+    private var comprarMedicamentoAdapter: ComprarMedicamentoAdapter? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -50,30 +53,69 @@ class ListaComprasFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
+        var modo: Boolean = true
+
         _binding = FragmentListaComprasBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        var listaComprarMedicamentos = listOf(
-            ComprarMedicamento(1, "med c", 20),
-            ComprarMedicamento(2, "med d", 2),
-            ComprarMedicamento(3, "med q", 10),
-            ComprarMedicamento(4, "med w", 12),
+        // Inserção
+        _binding!!.BTNLCCOMMIT.setOnClickListener {
+            val comprarDao = ComprarDAO(requireContext())
+            val compra = ComprarMedicamento(
+                -1,
+                _binding!!.inpTILCNOME.text.toString(),
+                _binding!!.inpTILCQTD.text.toString().toInt()
+            )
+            if (comprarDao.salvar(compra)){
+                Log.i("database", "Medicamento ${compra.nome} inserido")
+            } else {
+                Log.i("database", "Erro ao salver ${compra.nome}.")
+            }
 
-        )
+            atualizarListaCompras()
+            reloadFragment()
+        }
 
-        var recyclerComprarMedicamento = _binding!!.RVLC
-        recyclerComprarMedicamento.adapter = ComprarMedicamentoAdapter(listaComprarMedicamentos)
-        recyclerComprarMedicamento.layoutManager = LinearLayoutManager(view.context)
 
-        recyclerComprarMedicamento.addItemDecoration(
-            DividerItemDecoration(
-            view.context,
-            RecyclerView.VERTICAL
+
+
+        comprarMedicamentoAdapter = ComprarMedicamentoAdapter(
+            {codigo -> confirmarExclusao(codigo)},
+            {comprarMedicamento -> editar(comprarMedicamento)}
         )
-        )
+        binding.RVLC.adapter = comprarMedicamentoAdapter
+        binding.RVLC.layoutManager = LinearLayoutManager(view.context)
+
+
 
         // Inflate the layout for this fragment
         return view
+    }
+
+    private fun editar(compra: ComprarMedicamento) {
+        binding.inpTILCNOME.setText(compra.nome)
+        binding.inpTILCQTD.setText(compra.qtd.toString())
+    }
+
+    private fun confirmarExclusao(codigo: Int) {
+
+
+
+        val alertBuilder = AlertDialog.Builder(requireContext())
+
+        alertBuilder.setTitle("Confirmar exclusão")
+        alertBuilder.setMessage("Deseja excluir a compra?")
+        alertBuilder.setPositiveButton("Sim"){_, _->
+
+            val compraDAO = ComprarDAO(requireContext())
+            compraDAO.deletar(codigo)
+            atualizarListaCompras()
+        }
+
+        alertBuilder.setNegativeButton("Não"){_, _->}
+        alertBuilder.create().show()
+
+        reloadFragment()
     }
 
     companion object {
@@ -94,5 +136,29 @@ class ListaComprasFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    private fun atualizarListaCompras(){
+        val comprarDAO = ComprarDAO(requireContext())
+        listaCompras = comprarDAO.listar()
+        comprarMedicamentoAdapter?.adicionarLista(listaCompras)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        atualizarListaCompras()
+    }
+
+    private fun reloadFragment(){
+        val fragmentManager = parentFragmentManager
+        var frq = fragmentManager.findFragmentById(this.id)
+        val ft: FragmentTransaction = fragmentManager.beginTransaction()
+        if (frq != null) {
+            ft.detach(frq)
+            ft.attach(frq)
+        }
+        ft.commit()
+
+
     }
 }

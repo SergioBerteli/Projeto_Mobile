@@ -1,5 +1,6 @@
 package com.example.t3_mobile.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,17 +11,38 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.t3_mobile.R
 import com.example.t3_mobile.model.ComprarMedicamento
 import com.example.t3_mobile.adapter.ComprarMedicamentoAdapter.*
+import com.example.t3_mobile.databinding.ItemListaComprasBinding
 
 class ComprarMedicamentoAdapter(
-    private val listaComprarMedicamento: List<ComprarMedicamento>
+    val onClickExcluir: (Int) -> Unit,
+    val onClickEditar: (ComprarMedicamento) -> Unit
 ): Adapter<ComprarMedicamentoViewHolder>() {
 
+    private var listaComprarMedicamento: List<ComprarMedicamento> = emptyList()
+    fun adicionarLista(lista:List<ComprarMedicamento>) {
+        this.listaComprarMedicamento = lista
+        notifyDataSetChanged()
+    }
+
     inner class ComprarMedicamentoViewHolder(
-        val itemView: View
-    ):ViewHolder(itemView) {
-        val textLembrete:TextView = itemView.findViewById(R.id.TV_LC_ITEM)
-        val btnEditar:ImageButton = itemView.findViewById(R.id.BTN_LC_EDITAR)
-        val btnDeletar:ImageButton = itemView.findViewById(R.id.BTN_LC_DELETE)
+        itemListaComprasBinding: ItemListaComprasBinding
+    ):ViewHolder(itemListaComprasBinding.root) {
+        private val binding: ItemListaComprasBinding
+        init {
+            binding = itemListaComprasBinding
+        }
+
+        fun bind(compra: ComprarMedicamento) {
+            binding.TVLCITEM.text = "${compra.qtd} ${compra.nome}"
+
+            binding.BTNLCDELETE.setOnClickListener{
+                onClickExcluir(compra.id)
+            }
+
+            binding.BTNLCEDITAR.setOnClickListener{
+                onClickEditar(compra)
+            }
+        }
     }
 
     override fun onCreateViewHolder(
@@ -29,13 +51,13 @@ class ComprarMedicamentoAdapter(
     ): ComprarMedicamentoViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
 
-        val itemView = layoutInflater.inflate(
-            R.layout.item_lista_compras,
+        val itemListaComprasBinding = ItemListaComprasBinding.inflate(
+            layoutInflater,
             parent,
             false
         )
 
-        return ComprarMedicamentoViewHolder(itemView)
+        return ComprarMedicamentoViewHolder(itemListaComprasBinding)
     }
 
     override fun getItemCount(): Int {
@@ -44,6 +66,6 @@ class ComprarMedicamentoAdapter(
 
     override fun onBindViewHolder(holder: ComprarMedicamentoViewHolder, position: Int) {
         val med = listaComprarMedicamento[position]
-        holder.textLembrete.text = "${med.qtd} ${med.nome}"
+        holder.bind(med)
     }
 }
