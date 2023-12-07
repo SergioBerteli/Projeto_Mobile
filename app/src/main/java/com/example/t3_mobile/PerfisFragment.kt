@@ -1,5 +1,6 @@
 package com.example.t3_mobile
 
+import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,6 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.t3_mobile.adapter.PerfilAdapter
 import com.example.t3_mobile.databinding.FragmentPerfisBinding
+import com.example.t3_mobile.databse.ComprarDAO
+import com.example.t3_mobile.databse.PerfilDAO
 import com.example.t3_mobile.model.Usuario
 
 // TODO: Rename parameter arguments, choose names that match
@@ -33,6 +36,10 @@ class PerfisFragment : Fragment() {
 
     private val binding get() = _binding!!
 
+    private var listaPerfil = emptyList<Usuario>()
+    private var perfilAdapter: PerfilAdapter? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -52,24 +59,49 @@ class PerfisFragment : Fragment() {
             replaceFragment(AdicionaPerfilFragment())
         }
 
-        val listaUsuario = listOf(
-            Usuario(1, "Jonas", "Homem", 21),
-            Usuario(2, "Paulo", "Homem", 29),
-            Usuario(3, "Sergio", "Homem", 40),
-            Usuario(4, "Ana", "Mulher", 18),
-            Usuario(5, "Hevnadro", "Mulher", 24)
+
+
+        perfilAdapter = PerfilAdapter(
+            {id -> confirmarExclusao(id)},
+            {perfil -> editar(perfil)}
         )
-
-        var recyclerUsuario = _binding!!.RVP
-        recyclerUsuario.adapter = PerfilAdapter(listaUsuario)
-        recyclerUsuario.layoutManager = LinearLayoutManager(view.context)
-
-        recyclerUsuario.addItemDecoration(DividerItemDecoration(
-            view.context,
-            RecyclerView.VERTICAL
-        ))
+        binding.RVP.adapter = perfilAdapter
+        binding.RVP.layoutManager = LinearLayoutManager(view.context)
 
         return view
+    }
+
+    private fun editar(perfil: Usuario) {
+        var bundle: Bundle = Bundle()
+        bundle.putParcelable("perfil", perfil)
+        val fragmentManager= parentFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+
+        var adicionaPerfilFragment : AdicionaPerfilFragment = AdicionaPerfilFragment()
+        adicionaPerfilFragment.arguments = bundle
+
+        fragmentTransaction.replace(R.id.mainframe,adicionaPerfilFragment)
+
+        fragmentTransaction.commit()
+    }
+
+    private fun confirmarExclusao(codigo: Int) {
+
+
+
+        val alertBuilder = AlertDialog.Builder(requireContext())
+
+        alertBuilder.setTitle("Confirmar exclusão")
+        alertBuilder.setMessage("Deseja excluir o perfil?")
+        alertBuilder.setPositiveButton("Sim"){_, _->
+
+            val perfilDao = PerfilDAO(requireContext())
+            perfilDao.deletar(codigo)
+            atualizarListaPerfil()
+        }
+
+        alertBuilder.setNegativeButton("Não"){_, _->}
+        alertBuilder.create().show()
     }
 
     override fun onDestroyView(){
@@ -102,5 +134,16 @@ class PerfisFragment : Fragment() {
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.mainframe,fragment)
         fragmentTransaction.commit()
+    }
+
+    private fun atualizarListaPerfil(){
+        val perfilDao = PerfilDAO(requireContext())
+        listaPerfil = perfilDao.listar()
+        perfilAdapter?.adicionarLista(listaPerfil)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        atualizarListaPerfil()
     }
 }

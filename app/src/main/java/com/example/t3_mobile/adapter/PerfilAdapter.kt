@@ -11,30 +11,53 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.t3_mobile.R
 import com.example.t3_mobile.model.Usuario
 import com.example.t3_mobile.adapter.PerfilAdapter.*
+import com.example.t3_mobile.databinding.ItemListaUsuarioBinding
 
 class PerfilAdapter(
-    private val listaUsuario: List<Usuario>
+    val onClickExcluir: (Int) -> Unit,
+    val onClickEditar: (Usuario) -> Unit
 ): Adapter<UsuarioViewHolder>() {
+    private var listaUsuario: List<Usuario> = emptyList()
+
+    fun adicionarLista(lista:List<Usuario>){
+        this.listaUsuario = lista
+        notifyDataSetChanged()
+    }
 
     inner class  UsuarioViewHolder(
-        val itemView: View
-    ): ViewHolder(itemView){
-        val textNome:TextView = itemView.findViewById(R.id.TV_LP_nome)
-        val textIdade:TextView = itemView.findViewById(R.id.TV_LP_IDADE)
-        val textGenero:TextView = itemView.findViewById(R.id.TV_LP_genero)
-        val btnEditar:ImageButton = itemView.findViewById(R.id.BTN_LP_EDITAR)
+        itemListaPerfilBinding: ItemListaUsuarioBinding
+    ): ViewHolder(itemListaPerfilBinding.root){
+
+        private val binding: ItemListaUsuarioBinding
+        init {
+            binding = itemListaPerfilBinding
+        }
+
+        fun bind(perfil: Usuario){
+            binding.TVLPNome.text = perfil.nome
+            binding.TVLPGenero.text = perfil.genero
+            binding.TVLPIDADE.text = perfil.idade.toString()
+
+            binding.BTNLPDELETAR.setOnClickListener{
+                onClickExcluir(perfil.id)
+            }
+
+            binding.BTNLPEDITAR.setOnClickListener{
+                onClickEditar(perfil)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UsuarioViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
 
-        val itemView = layoutInflater.inflate(
-            R.layout.item_lista_usuario,
+        val itemListaPerfilBinding = ItemListaUsuarioBinding.inflate(
+            layoutInflater,
             parent,
             false
         )
 
-        return UsuarioViewHolder(itemView)
+        return UsuarioViewHolder(itemListaPerfilBinding)
     }
 
     override fun getItemCount(): Int {
@@ -43,9 +66,6 @@ class PerfilAdapter(
 
     override fun onBindViewHolder(holder: UsuarioViewHolder, position: Int) {
         val usuario = listaUsuario[position]
-        holder.textNome.text = "Nome: ${usuario.nome}"
-        holder.textIdade.text = "Idade: ${usuario.idade.toString()} anos"
-        holder.textGenero.text = "Genero: ${usuario.genero}"
+        holder.bind(usuario)
     }
-
 }

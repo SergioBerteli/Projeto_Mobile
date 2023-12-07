@@ -1,11 +1,15 @@
 package com.example.t3_mobile
 
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.t3_mobile.databinding.FragmentAdicionaPerfilBinding
+import com.example.t3_mobile.databse.PerfilDAO
+import com.example.t3_mobile.model.Usuario
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -41,10 +45,79 @@ class AdicionaPerfilFragment : Fragment() {
     ): View? {
         _binding = FragmentAdicionaPerfilBinding.inflate(inflater, container, false)
         val view = binding.root
+
+        var perfil: Usuario? = null
+        var bundle = arguments
+
+        if (bundle!= null) {
+            if (Build.VERSION.SDK_INT >= 33) {
+                perfil = bundle.getParcelable("perfil", Usuario::class.java)
+                if (perfil!=null) {
+                    val codigo = perfil.id
+                    binding.inpTIAPGENERO.setText(perfil.genero)
+                    binding.inpTIAPIDADE.setText(perfil.idade)
+                    binding.inpTvApNome.setText(perfil.nome)
+                }
+            }else {
+                perfil = bundle.getParcelable("perfil")
+                if (perfil != null) {
+                    val codigo = perfil.id
+                    binding.inpTIAPGENERO.setText(perfil.genero)
+                    binding.inpTIAPIDADE.setText(perfil.idade.toString())
+                    binding.inpTvApNome.setText(perfil.nome)
+                }
+            }
+        }
+
+        /*
+        *
+        * */
         _binding!!.btnAPCOMMIT.setOnClickListener {
-            replaceFragment(PerfisFragment())
+            if (perfil!=null) {
+                editar(perfil)
+
+            } else {
+                salvar()
+            }
         }
         return view
+    }
+
+    private fun editar(perfil: Usuario) {
+        val codigo: Int = perfil.id
+        val nome: String = binding.inpTvApNome.text.toString()
+        val idade:Int = binding.inpTIAPIDADE.text.toString().toInt()
+        val genero:String = binding.inpTIAPGENERO.text.toString()
+
+        val perfilAtualizado = Usuario(codigo, nome, genero, idade)
+
+        val perfilDao = PerfilDAO(requireContext())
+
+        if (perfilDao.atualizar(perfilAtualizado)){
+            Log.i("database", "Perfil ${perfilAtualizado.nome} atualziado com sucesso")
+        } else {
+            Log.i("database", "Falha ao atualziar perfil de ${perfilAtualizado.nome}")
+        }
+
+        replaceFragment(PerfisFragment())
+    }
+
+    private fun salvar(){
+        val perfilDao = PerfilDAO(requireContext())
+        val usuario = Usuario(
+            -1,
+            _binding!!.inpTvApNome.text.toString(),
+            _binding!!.inpTIAPGENERO.text.toString(),
+            _binding!!.inpTIAPIDADE.text.toString().toInt()
+        )
+
+        if (perfilDao.salvar(usuario)){
+            Log.i("database", "Perfil ${usuario.nome} salvo com sucesso")
+        } else {
+            Log.i("database", "Erro ao salver ${usuario.nome}.")
+        }
+
+        replaceFragment(PerfisFragment())
     }
 
     override fun onDestroyView(){
